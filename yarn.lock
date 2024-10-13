@@ -2663,12 +2663,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/bundle-analyzer@npm:14.2.3":
-  version: 14.2.3
-  resolution: "@next/bundle-analyzer@npm:14.2.3"
+"@next/bundle-analyzer@npm:14.2.15":
+  version: 14.2.15
+  resolution: "@next/bundle-analyzer@npm:14.2.15"
   dependencies:
     webpack-bundle-analyzer: 4.10.1
-  checksum: 34355cd5e28b02aba8179babd5ffd9c7f275c3fddeb16895c3f4fcbc3333c26fc6991dcb6488e26a7eb55516118ad9f53d25c916ea263d06beda417af7a06179
+  checksum: 4a5838d91165ccee468d66e6dc7b8bb9a908b7188c47988c6acacdd74ddc09fb6e722576c6ded356db39879ff7232e3e928dd5973c46f9a9024861688f70090a
   languageName: node
   linkType: hard
 
@@ -11380,7 +11380,7 @@ __metadata:
   resolution: "tailwind-nextjs-starter-blog@workspace:."
   dependencies:
     "@headlessui/react": 1.7.19
-    "@next/bundle-analyzer": 14.2.3
+    "@next/bundle-analyzer": 14.2.15
     "@svgr/webpack": ^8.0.1
     "@tailwindcss/forms": ^0.5.7
     "@tailwindcss/typography": ^0.5.12
