@@ -10037,9 +10037,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rehype-citation@npm:^2.0.0":
-  version: 2.1.1
-  resolution: "rehype-citation@npm:2.1.1"
+"rehype-citation@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "rehype-citation@npm:2.2.0"
   dependencies:
     "@citation-js/core": ^0.7.14
     "@citation-js/date": ^0.5.1
@@ -10055,7 +10055,7 @@ __metadata:
     parse5: ^7.1.2
     unified: ^11.0.0
     unist-util-visit: ^5.0.0
-  checksum: 7904f15a1eca4c463c778876bfbf88485b57481d8c40f01d9aa9093d1c18570e23be4523e503e8947a57308f7dd4d5d5b2bf298dddfeb6b82055438cfa61213d
+  checksum: fcf7b3a8c30eea42450baaf834aaf2a90a394d6aec3598032a78d4760354bca4fd5c3e8be09acbe40c1198703b563f1b8c5931e7f810d17687b67a36704d36f7
   languageName: node
   linkType: hard
 
@@ -11330,7 +11330,7 @@ __metadata:
     react-dom: 18.3.1
     reading-time: 1.5.0
     rehype-autolink-headings: ^7.1.0
-    rehype-citation: ^2.0.0
+    rehype-citation: ^2.2.0
     rehype-katex: ^7.0.0
     rehype-preset-minify: 7.0.0
     rehype-prism-plus: ^2.0.0
