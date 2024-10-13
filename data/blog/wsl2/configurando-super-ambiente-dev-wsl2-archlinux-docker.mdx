@@ -1,0 +1,111 @@
+---
+title: 'Configurando super ambiente de desenvolvimento com WSL2, Arch Linux e Docker'
+date: '2024-04-09'
+tags: ['docker', 'wsl2', 'produtividade', 'windows', 'linux', 'archlinux', 'yay', 'vscode']
+draft: false
+summary: Como configurar um ambiente de desenvolvimento robusto no Windows usando WSL2, Arch Linux e Docker, integrando o VS Code para facilitar o trabalho com containers e ferramentas Linux.
+---
+
+Se você é um desenvolvedor que utiliza Windows como sistema operacional principal, mas precisa ou prefere o ambiente Linux para desenvolver seus projetos, este post é para você. Vamos mostrar como configurar um ambiente de desenvolvimento robusto utilizando o Subsistema Windows para Linux (WSL2), a distribuição Arch Linux e o Docker. Vamos nessa?
+
+## Passo 1: Instalação do WSL2
+
+O primeiro passo é instalar o WSL2 em seu sistema Windows. Siga estas etapas:
+
+1. Abra o PowerShell como administrador e execute:
+
+   ```bash
+   wsl --install
+   ```
+
+2. Reinicie seu computador quando solicitado.
+
+## Passo 2: Selecionando a Distribuição Linux
+
+Por padrão, a Microsoft oferece algumas distribuições no Microsoft Store, como Ubuntu, Debian e Kali Linux. No entanto, para instalar Arch Linux, precisaremos instalar uma distro não oficial, mas que está na loja de aplicativos do Windows.
+
+Baixe o Arch Linux para WSL.
+
+## Passo 3: Configuração Inicial do Arch Linux
+
+Após instalar o ArchWSL ou outra versão do Arch para WSL, faça o seguinte:
+
+1. Abra o Arch Linux no menu Iniciar.
+2. Atualize os pacotes com:
+
+   ```bash
+   sudo pacman -Syyu
+   ```
+
+3. Instale os pacotes necessários que você usará em seu ambiente de desenvolvimento.
+
+Esta distro do Arch Linux já vem com algumas ferramentas pré-instaladas, porém sugiro que instale o Yay como Helper AUR.
+
+Para instalar, digite:
+
+```bash
+pacman -S --needed yay
+```
+
+## Passo 4: Instalação do Docker
+
+Agora vamos instalar o Docker dentro da sua instância do Arch Linux no WSL2:
+
+1. Instale os pacotes necessários:
+
+   ```bash
+   yay -S docker
+   ```
+
+2. Dê as permissões para o usuário Docker:
+
+   ```bash
+   sudo usermod -aG docker $USER
+   ```
+
+3. No PowerShell, reinicie o WSL:
+
+   ```bash
+   wsl --reboot
+   ```
+
+4. Inicie o serviço Docker:
+
+   ```bash
+   sudo systemctl enable --now docker.service
+   sudo systemctl start --now docker.service
+   ```
+
+5. Execute um comando de teste:
+
+   ```bash
+   docker info
+   ```
+
+A saída deve ser algo semelhante:
+
+![saida](/static/images/1712632460442.png)
+
+**Nota:** Como estamos trabalhando dentro do WSL2, pode ser necessário ajustes adicionais para gerenciar serviços com `systemctl`.
+
+## Passo 5: Integração com VS Code (Opcional)
+
+Para uma experiência mais integrada ao desenvolver usando containers Docker e/ou diretamente no ambiente do Arch Linux via linha de comando, recomendamos utilizar a extensão "Remote - WSL" do Visual Studio Code:
+
+1. Instale o Visual Studio Code em seu sistema Windows.
+2. Baixe a extensão "Remote - WSL".
+3. Abra o terminal do Arch Linux e digite:
+
+   ```bash
+   code .
+   ```
+
+Será baixado alguns pacotes para integração com o VS Code e, em seguida, ele será aberto!
+
+## Considerações Finais
+
+Este guia forneceu uma visão geral sobre como configurar um ambiente de desenvolvimento utilizando tecnologias tanto do mundo Windows quanto do mundo Linux.
+
+Com esse setup, você poderá aproveitar as vantagens da flexibilidade dos sistemas baseados em UNIX enquanto continua operando em uma máquina Windows.
+
+Boa codificação!
