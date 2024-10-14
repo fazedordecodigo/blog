@@ -48,8 +48,8 @@
   "devDependencies": {
     "@svgr/webpack": "^8.0.1",
     "@types/mdx": "^2.0.12",
-    "@types/react": "^18.2.73",
-    "@typescript-eslint/eslint-plugin": "^8.9.0",
+    "@types/react": "^18.3.11",
+    "@typescript-eslint/eslint-plugin": "^6.1.0",
     "@typescript-eslint/parser": "^8.8.1",
     "cross-env": "^7.0.3",
     "eslint": "^8.45.0",
