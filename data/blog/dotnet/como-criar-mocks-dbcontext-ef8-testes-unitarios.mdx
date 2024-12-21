@@ -110,13 +110,12 @@ public class ProdutoService
 
     public async Task<Produto?> ObterProdutoPorNomeAsync(string nome)
     {
-        return await _context.Produtos.FirstOrDefaultAsync(x => x.Nome == nome)
-            .ToListAsync();
+        return await _context.Produtos.FirstOrDefaultAsync(x => x.Nome == nome);
     }
 }
 ```
 
-Para testar o método `ObterProdutosPorNomeAsync`:
+Para testar o método `ObterProdutoPorNomeAsync`:
 
 ```csharp
 using Xunit;
@@ -138,7 +137,7 @@ public class ProdutoServiceTests
         var mock = dadosFalsos.AsQueryable().BuildMockDbSet();
         mock.Setup(x => x.FindAsync(It.IsAny<object[]>()))
             .ReturnsAsync((object[] input) => dadosFalsos.FirstOrDefault(x => x.Nome == (string)input[0]));
-        
+
         var mockContext = new Mock<AppDbContext>();
         mockContext.Setup(c => c.Produtos).Returns(mock.Object);
 
