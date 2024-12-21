@@ -1,0 +1,162 @@
+---
+title: 'Como Criar Mocks do DbContext no Entity Framework Core 8 para Testes Unitários'
+date: '2024-12-21'
+tags: ['Dotnet', 'EF8', 'ORM', 'Mocks', 'UnitTests', 'TDD', 'Repository', 'vscode', 'XUnit', 'Moq', 'MockQueryable']
+draft: false
+summary: Este artigo aborda como criar mocks do DbContext do Entity Framework Core 8 para realizar testes unitários de forma eficaz e sem a necessidade de um banco de dados real.
+---
+
+Os testes unitários são essenciais no desenvolvimento de software, pois garantem a qualidade e a confiabilidade do código. No caso de aplicações que utilizam o Entity Framework Core 8, testar a lógica que interage com o banco de dados pode ser desafiador. Uma solução eficiente é criar mocks do `DbContext`, permitindo testar a lógica de negócio sem depender de um banco de dados real. Este artigo explica como fazer isso, abordando métodos assíncronos e os desafios relacionados.
+
+---
+
+## Por que Mockar o DbContext?
+
+Mockar o `DbContext` é uma prática valiosa porque:
+
+1. **Isolamento**: Permite testar a lógica de negócio separadamente, sem depender de um banco de dados real.
+2. **Desempenho**: Reduz o tempo dos testes, eliminando operações de entrada e saída (I/O).
+3. **Confiabilidade**: Garante que os testes sejam reproduzíveis e consistentes.
+
+No entanto, mockar métodos assíncronos do Entity Framework, como `ToListAsync` ou `FirstOrDefaultAsync`, pode ser desafiador. Isso ocorre porque o EF Core utiliza `IAsyncEnumerable` e `IAsyncQueryProvider` para implementar essas operações. Mockar esses métodos exige simular corretamente o comportamento das interfaces assíncronas, o que é essencial para garantir que os testes reflitam o comportamento real da aplicação.
+
+---
+
+## Configurando o Ambiente
+
+Antes de começar, configure o ambiente com os seguintes pacotes:
+
+- **Entity Framework Core 8**
+- **Moq** (para criar os mocks)
+- **xUnit** (ou outro framework de testes unitários)
+- **MockQueryable** (para simular métodos assíncronos)
+
+Adicione os pacotes ao projeto:
+
+```bash
+# Pacote do EF Core para InMemory (opcional)
+dotnet add package Microsoft.EntityFrameworkCore.InMemory
+
+# Biblioteca de Mocking
+dotnet add package Moq
+
+# Framework de Testes
+dotnet add package xUnit
+
+# Biblioteca de simulação async
+dotnet add package MockQueryable.moq
+```
+
+Certifique-se de que sua aplicação está configurada para utilizar a versão mais recente do EF Core e que os pacotes estão devidamente instalados.
+
+---
+
+## Criando o Mock do DbContext com Métodos Assíncronos
+
+Vamos criar um `DbSet` falso com suporte a operações assíncronas. Suponha que temos as seguintes classes no projeto:
+
+```csharp
+public class Produto
+{
+    public int Id { get; set; }
+    public string Nome { get; set; } = string.Empty;
+    public decimal Preco { get; set; }
+}
+
+public class AppDbContext : DbContext
+{
+    public DbSet<Produto> Produtos { get; set; } = null!;
+
+    public AppDbContext() { }
+}
+```
+
+Essas classes representam um cenário comum de uma aplicação CRUD, onde manipulamos objetos de domínio como `Produto` através de um contexto do EF Core.
+
+### Mockando o DbContext
+
+Com o `DbSet` configurado, podemos mockar o `DbContext` para utilizá-lo nos testes:
+
+```csharp
+var dadosFalsos = new List<Produto>
+{
+    new Produto { Id = 1, Nome = "Produto A", Preco = 10.0m },
+    new Produto { Id = 2, Nome = "Produto B", Preco = 20.0m }
+};
+
+var mock = dadosFalsos.AsQueryable().BuildMockDbSet();
+mock.Setup(x => x.FindAsync(It.IsAny<object[]>()))
+    .ReturnsAsync((object[] input) => dadosFalsos.FirstOrDefault(x => x.Nome == (string)input[0]));
+
+var mockContext = new Mock<AppDbContext>();
+mockContext.Setup(c => c.Produtos).Returns(mock.Object);
+```
+
+---
+
+## Escrevendo Testes Unitários com Métodos Assíncronos
+
+Agora que temos o `DbContext` mockado, podemos testar a lógica de negócio. Considere o seguinte serviço:
+
+```csharp
+public class ProdutoService
+{
+    private readonly AppDbContext _context;
+
+    public ProdutoService(AppDbContext context)
+    {
+        _context = context;
+    }
+
+    public async Task<Produto?> ObterProdutoPorNomeAsync(string nome)
+    {
+        return await _context.Produtos.FirstOrDefaultAsync(x => x.Nome == nome)
+            .ToListAsync();
+    }
+}
+```
+
+Para testar o método `ObterProdutosPorNomeAsync`:
+
+```csharp
+using Xunit;
+using MockQueryable.Moq;
+using System.Threading.Tasks;
+
+public class ProdutoServiceTests
+{
+    [Fact]
+    public async Task ObterProdutoPorNomeAsync_DeveRetornarProdutoCorreto()
+    {
+        // Arrange
+        var dadosFalsos = new List<Produto>
+        {
+            new Produto { Id = 1, Nome = "Produto A", Preco = 10.0m },
+            new Produto { Id = 2, Nome = "Produto B", Preco = 20.0m }
+        };
+
+        var mock = dadosFalsos.AsQueryable().BuildMockDbSet();
+        mock.Setup(x => x.FindAsync(It.IsAny<object[]>()))
+            .ReturnsAsync((object[] input) => dadosFalsos.FirstOrDefault(x => x.Nome == (string)input[0]));
+        
+        var mockContext = new Mock<AppDbContext>();
+        mockContext.Setup(c => c.Produtos).Returns(mock.Object);
+
+        var service = new ProdutoService(mockContext.Object);
+
+        // Act
+        var resultado = await service.ObterProdutoPorNomeAsync("Produto A");
+
+        // Assert
+        Assert.Equal("Produto A", resultado.Nome);
+    }
+}
+```
+
+Essa abordagem garante que o comportamento dos métodos assíncronos seja testado de forma eficaz, reproduzindo cenários reais sem a necessidade de um banco de dados físico.
+
+---
+
+## Conclusão
+
+Mockar o `DbContext` com suporte a métodos assíncronos no Entity Framework Core 8 pode ser desafiador, mas é uma prática valiosa para criar testes rápidos e confiáveis. A configuração correta permite que você teste a lógica de negócio isoladamente, garantindo qualidade e eficiência no desenvolvimento. Ao dominar essas técnicas, você pode construir aplicações robustas, com código testável e confiável, essencial para um desenvolvimento ágil e sustentável.
